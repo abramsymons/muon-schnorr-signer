@@ -19,22 +19,7 @@ router.use((req, res, next) => {
 
 // Define routes
 router.get("/", (req, res) => {
-  res.json({ message: "Muon Optimistic Node" });
-});
-
-// Route to retrieve a request request by reqId
-router.get("/requests/:reqId", async (req, res) => {
-  try {
-    const { reqId } = req.params;
-    const request = await getRequest(reqId);
-    if (request) {
-      res.status(200).json({ success: true, data: request });
-    } else {
-      throw new Error("Request not found.");
-    }
-  } catch (error) {
-    return errorHandler(res, error);
-  }
+  res.json({ message: "Muon Schnorr Signer" });
 });
 
 router.use("/v1/", async (req, res) => {
