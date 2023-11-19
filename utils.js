@@ -6,6 +6,18 @@ const elliptic = require("elliptic");
 const EC = elliptic.ec;
 const curve = new EC("secp256k1");
 
+function uuid() {
+  return (
+    Date.now().toString(32) + Math.floor(Math.random() * 999999999).toString(32)
+  );
+}
+
+function sign(hash, private_key) {
+  const web3 = new Web3();
+  let sig = web3.eth.accounts.sign(hash, private_key);
+  return sig.signature;
+}
+
 function validatePublicKey(publicKey) {
   if (typeof publicKey === "string") publicKey = keyFromPublic(publicKey);
   return curve.curve.validate(publicKey);
@@ -130,12 +142,13 @@ async function runMuonApp(request) {
   const appSignParams = muonApp.signParams(response, onRequestResult);
   const hashSecurityParams = soliditySha3(...appSignParams);
   response.reqId = "0x" + curve.genKeyPair().getPrivate("hex");
+  response.data.uid = uuid();
   response.data.signParams = [
     { name: "appId", type: "uint256", value: response.appId },
     { name: "reqId", type: "uint256", value: response.reqId },
     ...appSignParams,
   ];
-  const hashToBeSigned = soliditySha3(...response.data.signParams);
+  response.data.resultHash = soliditySha3(...response.data.signParams);
   const nonce = curve.genKeyPair();
   const account = curve.keyFromPrivate(process.env.PRIVATE_KEY);
   const verifyingPubKey = account.getPublic();
@@ -144,7 +157,7 @@ async function runMuonApp(request) {
     account.getPublic(),
     nonce.getPrivate(),
     nonce.getPublic(),
-    hashToBeSigned,
+    response.data.resultHash,
   );
   response.signatures = [
     {
@@ -153,6 +166,16 @@ async function runMuonApp(request) {
       signature: bn2hex(sig.s),
     },
   ];
+
+  response.gwAddress = response.signatures[0].owner;
+  response.shieldAddress = response.gwAddress;
+  response.shieldSignature = sign(
+    response.data.resultHash,
+    process.env.PRIVATE_KEY,
+  );
+  response.nodeSignature = response.shieldSignature;
+  response.confirmed = true;
+
   return response;
 }
 
