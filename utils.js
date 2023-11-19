@@ -148,6 +148,7 @@ async function runMuonApp(request) {
     { name: "reqId", type: "uint256", value: response.reqId },
     ...appSignParams,
   ];
+  response.data.result = onRequestResult;
   response.data.resultHash = soliditySha3(...response.data.signParams);
   const nonce = curve.genKeyPair();
   const account = curve.keyFromPrivate(process.env.PRIVATE_KEY);
