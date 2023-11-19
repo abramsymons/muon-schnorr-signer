@@ -152,6 +152,7 @@ async function runMuonApp(request) {
   response.data.resultHash = soliditySha3(...response.data.signParams);
 
   const nonce = curve.genKeyPair();
+  response.data.init = { nonceAddress: pub2addr(nonce.getPublic()) };
   const account = curve.keyFromPrivate(process.env.PRIVATE_KEY);
   const verifyingPubKey = account.getPublic();
   let sig = schnorrSign(
