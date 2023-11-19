@@ -138,18 +138,19 @@ async function runMuonApp(request) {
   };
 
   const muonApp = require(appPath);
-  const onRequestResult = await muonApp.onRequest(response);
-  const appSignParams = muonApp.signParams(response, onRequestResult);
-  const hashSecurityParams = soliditySha3(...appSignParams);
   response.reqId = "0x" + curve.genKeyPair().getPrivate("hex");
   response.data.uid = uuid();
+  const onRequestResult = await muonApp.onRequest(response);
+  response.data.result = onRequestResult;
+  const appSignParams = muonApp.signParams(response, onRequestResult);
+  const hashSecurityParams = soliditySha3(...appSignParams);
   response.data.signParams = [
     { name: "appId", type: "uint256", value: response.appId },
     { name: "reqId", type: "uint256", value: response.reqId },
     ...appSignParams,
   ];
-  response.data.result = onRequestResult;
   response.data.resultHash = soliditySha3(...response.data.signParams);
+
   const nonce = curve.genKeyPair();
   const account = curve.keyFromPrivate(process.env.PRIVATE_KEY);
   const verifyingPubKey = account.getPublic();
