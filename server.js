@@ -43,7 +43,7 @@ router.use("/v1/", async (req, res) => {
 
 // Error handler function
 const errorHandler = (res, error) => {
-  console.error("Warrantor error: ", error);
+  console.error("error: ", error);
   res.status(400).json({
     success: false,
     error: {

@@ -1,3 +1,4 @@
+const ethJsUtil = require("ethereumjs-util");
 const Web3 = require("web3");
 const {
   utils: { toBN, BN, keccak256, toChecksumAddress, soliditySha3 },
@@ -19,7 +20,6 @@ function sign(hash, private_key) {
 }
 
 function validatePublicKey(publicKey) {
-  if (typeof publicKey === "string") publicKey = keyFromPublic(publicKey);
   return curve.curve.validate(publicKey);
 }
 
@@ -62,12 +62,43 @@ function schnorrSign(
 
 function schnorrVerify(signingPublicKey, msg, sig) {
   if (typeof sig === "string") sig = splitSignature(sig);
+  signingPubKey = curve.keyFromPublic(signingPubKey, "hex").getPublic();
   if (!validatePublicKey(signingPublicKey)) return false;
   const s = sig.s.umod(curve.n);
   let r_v = pointAdd(curve.g.mul(s), signingPublicKey.mul(sig.e));
   let nonceTimesGeneratorAddress = pub2addr(r_v);
   let e_v = schnorrHash(signingPublicKey, nonceTimesGeneratorAddress, msg);
   return toBN(e_v).eq(sig.e);
+}
+
+function schnorrVerifyWithNonceAddress(
+  hash,
+  signature,
+  nonceAddress,
+  signingPubKey,
+) {
+  nonceAddress = nonceAddress.toLowerCase();
+  signature = toBN(signature).umod(curve.n);
+  signingPubKey = curve.keyFromPublic(signingPubKey, "hex").getPublic();
+  if (!validatePublicKey(signingPubKey)) return false;
+
+  if (toBN(nonceAddress).isZero() || signature.isZero() || toBN(hash).isZero())
+    return false;
+
+  const e = toBN(schnorrHash(signingPubKey, nonceAddress, hash));
+
+  let recoveredPubKey = ethJsUtil.ecrecover(
+    curve.n
+      .sub(signingPubKey.getX().mul(signature).umod(curve.n))
+      .toBuffer("be", 32),
+    signingPubKey.getY().isEven() ? 27 : 28,
+    signingPubKey.getX().toBuffer("be", 32),
+    e.mul(signingPubKey.getX()).umod(curve.n).toBuffer("be", 32),
+  );
+  const addrBuf = ethJsUtil.pubToAddress(recoveredPubKey);
+  const addr = ethJsUtil.bufferToHex(addrBuf);
+
+  return nonceAddress === addr;
 }
 
 function schnorrHash(signingPublicKey, nonceTimesGeneratorAddress, msg) {
@@ -184,4 +215,5 @@ async function runMuonApp(request) {
 
 module.exports = {
   runMuonApp,
+  schnorrVerifyWithNonceAddress,
 };

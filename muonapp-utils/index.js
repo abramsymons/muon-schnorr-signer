@@ -24,6 +24,7 @@ const soliditySha3 = require("./utils/soliditySha3");
 
 const { multiCall } = require("./utils/multicall");
 const { BNSqrt } = require("./utils/bn-sqrt");
+const { schnorrVerifyWithNonceAddress } = require("../utils");
 
 module.exports = {
   axios,
@@ -52,4 +53,5 @@ module.exports = {
   recoverTypedSignature: ethSigUtil.recoverTypedSignature,
   recoverTypedMessage: ethSigUtil.recoverTypedMessage,
   BNSqrt: BNSqrt,
+  schnorrVerifyWithNonceAddress,
 };
