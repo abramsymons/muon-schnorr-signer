@@ -1,6 +1,6 @@
+const numberToBN = require('number-to-bn');
 const BigNumber = require('bignumber.js');
 BigNumber.set({DECIMAL_PLACES: 26})
-const toBN = require('web3').utils.toBN;
 
 module.exports.timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 module.exports.getTimestamp = () => Math.floor(Date.now() / 1000);
@@ -68,4 +68,13 @@ module.exports.deepFreeze = function deepFreeze (object) {
 module.exports.stackTrace = function() {
   let err = new Error();
   return err.stack;
+}
+
+module.exports.toBN = function(number) {
+  try {
+    return numberToBN.apply(null, arguments);
+  }
+  catch (e) {
+    throw new Error(e + ' Given value: "' + number + '"');
+  }
 }

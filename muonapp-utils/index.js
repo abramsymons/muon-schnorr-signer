@@ -1,11 +1,11 @@
 const axios = require("axios");
-const Web3 = require("web3");
+const { Web3 } = require("web3");
 const tron = require("./utils/tron");
 const { flatten, groupBy } = require("lodash");
 const { BigNumber } = require("bignumber.js");
-
+const BN = require("bn.js");
 const { toBaseUnit } = require("./utils/crypto");
-const { timeout, floatToBN } = require("./utils/helpers");
+const { timeout, floatToBN, toBN } = require("./utils/helpers");
 const util = require("ethereumjs-util");
 const ws = require("ws");
 const ethSigUtil = require("eth-sig-util");
@@ -34,9 +34,9 @@ module.exports = {
   tron,
   ws,
   timeout,
-  BN: Web3.utils.BN,
+  BN,
   BigNumber,
-  toBN: Web3.utils.toBN,
+  toBN,
   floatToBN,
   multiCall,
   ethGetBlock,

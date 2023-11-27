@@ -1,8 +1,8 @@
 const ethers = require('ethers')
-const Web3 = require('web3')
+const { Web3 } = require('web3')
 const {hashCallOutput} = require('./eth')
-const BN = Web3.utils.BN
-const web3 = new Web3();
+const BN = require("bn.js");
+const web3 = new Web3('http://localhost:8545');
 
 function soliditySha3(params){
   return web3.utils.soliditySha3(...params);

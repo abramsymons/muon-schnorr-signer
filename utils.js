@@ -1,11 +1,21 @@
 const ethJsUtil = require("ethereumjs-util");
-const Web3 = require("web3");
+const numberToBN = require("number-to-bn");
+
+const { Web3 } = require("web3");
 const {
-  utils: { toBN, BN, keccak256, toChecksumAddress, soliditySha3 },
+  utils: { keccak256, toChecksumAddress, soliditySha3 },
 } = Web3;
 const elliptic = require("elliptic");
 const EC = elliptic.ec;
 const curve = new EC("secp256k1");
+
+function toBN(number) {
+  try {
+    return numberToBN.apply(null, arguments);
+  } catch (e) {
+    throw new Error(e + ' Given value: "' + number + '"');
+  }
+}
 
 function uuid() {
   return (
@@ -14,7 +24,8 @@ function uuid() {
 }
 
 function sign(hash, private_key) {
-  const web3 = new Web3();
+  const web3 = new Web3("http://localhost:8545");
+  console.log(hash, private_key);
   let sig = web3.eth.accounts.sign(hash, private_key);
   return sig.signature;
 }
