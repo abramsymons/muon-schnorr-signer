@@ -25,8 +25,7 @@ function uuid() {
 
 function sign(hash, private_key) {
   const web3 = new Web3("http://localhost:8545");
-  console.log(hash, private_key);
-  let sig = web3.eth.accounts.sign(hash, private_key);
+  let sig = web3.eth.accounts.sign(hash, '0x'+private_key);
   return sig.signature;
 }
 
