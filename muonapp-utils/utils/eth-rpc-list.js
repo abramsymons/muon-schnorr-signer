@@ -31,10 +31,10 @@ function getEnvProviders(chainId) {
     .map((rpc) => rpc.trim())
     .filter(rpc => !!rpc)
 
-  if(!!process.env[`WEB3_PROVIDER_${chainId}`]){
+  if (!!process.env[`WEB3_PROVIDER_${chainId}`]) {
     return splitItems(process.env[`WEB3_PROVIDER_${chainId}`]);
   }
-  if(process.env[oldEnvKeys[chainId]]) {
+  if (process.env[oldEnvKeys[chainId]]) {
     return splitItems(process.env[oldEnvKeys[chainId]])
   }
   return [];
@@ -185,6 +185,14 @@ const DefaultRpcList = {
   588: [
     "https://stardust.metis.io/?owner=588",
   ],
+
+  /* Base mainnet*/
+  8453: [
+    "https://mainnet.base.org",
+    "https://base.publicnode.com",
+    "https://base.drpc.org",
+    "https://base.llamarpc.com",
+  ],
 }
 
 const finalRpcList = Object.entries(DefaultRpcList)
@@ -198,6 +206,6 @@ const finalRpcList = Object.entries(DefaultRpcList)
       ]))
     ]
   })
-  .reduce((obj, [id, list])=>(obj[id]=list, obj),{})
+  .reduce((obj, [id, list]) => (obj[id] = list, obj), {})
 
 module.exports = finalRpcList;
