@@ -25,7 +25,7 @@ function uuid() {
 
 function sign(hash, private_key) {
   const web3 = new Web3("http://localhost:8545");
-  let sig = web3.eth.accounts.sign(hash, '0x'+private_key);
+  let sig = web3.eth.accounts.sign(hash, private_key);
   return sig.signature;
 }
 
@@ -194,7 +194,7 @@ async function runMuonApp(request) {
 
   const nonce = curve.genKeyPair();
   response.data.init = { nonceAddress: pub2addr(nonce.getPublic()) };
-  const account = curve.keyFromPrivate(process.env.PRIVATE_KEY);
+  const account = curve.keyFromPrivate(process.env.SHNORR_PRIVATE_KEY);
   const verifyingPubKey = account.getPublic();
   let sig = schnorrSign(
     account.getPrivate(),
@@ -211,11 +211,14 @@ async function runMuonApp(request) {
     },
   ];
 
-  response.gwAddress = response.signatures[0].owner;
+  const web3 = new Web3("http://localhost:8545");
+  response.gwAddress = web3.eth.accounts.privateKeyToAccount(
+    "0x" + process.env.ETH_PRIVATE_KEY,
+  ).address;
   response.shieldAddress = response.gwAddress;
   response.shieldSignature = sign(
     response.data.resultHash,
-    process.env.PRIVATE_KEY,
+    "0x" + process.env.ETH_PRIVATE_KEY,
   );
   response.nodeSignature = response.shieldSignature;
   response.confirmed = true;

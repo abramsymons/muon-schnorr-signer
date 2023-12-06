@@ -12,7 +12,9 @@ $ npm install
 ```
 cp .env.example .env
 ```
-Edit the file and set `PRIVATE_KEY`
+Edit the file and set `SHNORR_PRIVATE_KEY` & `ETH_PRIVATE_KEY`
+
+> **_Security Note:_** Using different private keys is highly recommenended to resolve different sort of potential security concerns.
 
 ## Run
 
