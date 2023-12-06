@@ -9,6 +9,11 @@ const elliptic = require("elliptic");
 const EC = elliptic.ec;
 const curve = new EC("secp256k1");
 
+if (process.env.TEST_NETWORK_ID && process.env.TEST_NETWORK_PROVIDER) {
+  const EthRpcList = require("./muonapp-utils/utils/eth-rpc-list");
+  EthRpcList[process.env.TEST_NETWORK_ID] = [process.env.TEST_NETWORK_PROVIDER];
+}
+
 function toBN(number) {
   try {
     return numberToBN.apply(null, arguments);
