@@ -192,7 +192,7 @@ async function runMuonApp(request) {
   const hashSecurityParams = soliditySha3(...appSignParams);
   response.data.signParams = [
     { name: "appId", type: "uint256", value: response.appId },
-    { name: "reqId", type: "uint256", value: response.reqId },
+    { name: "reqId", type: "bytes", value: response.reqId },
     ...appSignParams,
   ];
   response.data.resultHash = soliditySha3(...response.data.signParams);
