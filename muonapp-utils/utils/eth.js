@@ -181,13 +181,13 @@ function getTransactionReceipt(txHash, network) {
  * @param {boolean, undefined} options.forceRotate - rotate RPC provider when any error happened.
  * @returns {Promise<any>}
  */
-function call(contractAddress, methodName, params, abi, network, options = {}) {
+function call(contractAddress, methodName, params, abi, network, blockNumber = 'latest', options = {}) {
   return getWeb3(network).then((web3) => {
     let contract = new web3.eth.Contract(abi, contractAddress);
     return wrappedCall(
       network,
       contract.methods[methodName](...params).call,
-      undefined,
+      [undefined, blockNumber],
       options,
     );
   });
