@@ -133,7 +133,8 @@ async function wrappedCall(network, web3ApiCall, args = [], options = {}) {
       console.log(`error on web3 call`, { chainId }, e.message);
       delete web3Instances[chainId];
     }
-    throw e;
+    console.log(e);
+    throw { message: "FAILED_TO_REACH_CHAIN" };
   }
 }
 
