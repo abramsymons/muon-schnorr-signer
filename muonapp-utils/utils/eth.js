@@ -128,13 +128,13 @@ async function wrappedCall(network, web3ApiCall, args = [], options = {}) {
   try {
     return await web3ApiCall(...args);
   } catch (e) {
+    const chainId = getNetworkId(network);
     if (options.forceRotate || errorNeedRpcRotate(e.message)) {
-      const chainId = getNetworkId(network);
       console.log(`error on web3 call`, { chainId }, e.message);
       delete web3Instances[chainId];
     }
     console.log(e);
-    throw { message: "FAILED_TO_REACH_CHAIN" };
+    throw { message: "FAILED_TO_REACH_CHAIN", chainId };
   }
 }
 
