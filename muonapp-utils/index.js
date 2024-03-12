@@ -26,6 +26,8 @@ const { multiCall } = require("./utils/multicall");
 const { BNSqrt } = require("./utils/bn-sqrt");
 const { schnorrVerifyWithNonceAddress } = require("../utils");
 
+const { apmAgent } = require("./utils/apm");
+
 module.exports = {
     axios,
     Web3,
@@ -54,4 +56,5 @@ module.exports = {
     recoverTypedMessage: ethSigUtil.recoverTypedMessage,
     BNSqrt: BNSqrt,
     schnorrVerifyWithNonceAddress,
+    apmAgent,
 };

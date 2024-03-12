@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const { runMuonApp } = require("./utils");
 global.MuonAppUtils = require("./muonapp-utils");
 
+const { apmAgent } = MuonAppUtils;
+
 const PORT = process.env.SERVER_PORT || 3000;
 const router = express();
 
@@ -31,10 +33,12 @@ router.use("/v1/", async (req, res) => {
         const { app, method, params = {} } = mixed;
         const requestData = { app, method, params };
 
+        apmAgent.startTransaction(method, "muon-app");
         const result = await runMuonApp(requestData);
         if (!result) {
             throw new Error("Running the Moun app failed.");
         }
+        apmAgent.endTransaction();
         return res.json({ success: true, result });
     } catch (error) {
         return errorHandler(res, error);
@@ -50,6 +54,8 @@ const errorHandler = (res, error) => {
             message: error.message,
         },
     });
+    apmAgent.captureError(error);
+    apmAgent.endTransaction();
 };
 
 // Start the server and set up periodic request status updates
