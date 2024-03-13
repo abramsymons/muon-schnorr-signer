@@ -54,7 +54,7 @@ const errorHandler = (res, error) => {
             message: error.message,
         },
     });
-    apmAgent.captureError(error);
+    apmAgent.captureError(error, { custom: error.metadata });
     apmAgent.endTransaction();
 };
 
