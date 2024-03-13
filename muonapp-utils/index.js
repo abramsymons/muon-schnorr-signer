@@ -26,7 +26,7 @@ const { multiCall } = require("./utils/multicall");
 const { BNSqrt } = require("./utils/bn-sqrt");
 const { schnorrVerifyWithNonceAddress } = require("../utils");
 
-const { apmAgent } = require("./utils/apm");
+const { apmAgent, withSpan } = require("./utils/apm");
 
 module.exports = {
     axios,
@@ -57,4 +57,5 @@ module.exports = {
     BNSqrt: BNSqrt,
     schnorrVerifyWithNonceAddress,
     apmAgent,
+    withSpan,
 };
