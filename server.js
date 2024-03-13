@@ -55,7 +55,7 @@ const errorHandler = (res, error) => {
         },
     });
     apmAgent.captureError(error, { custom: error.metadata });
-    apmAgent.endTransaction();
+    apmAgent.endTransaction("failure");
 };
 
 // Start the server and set up periodic request status updates
