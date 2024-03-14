@@ -170,7 +170,7 @@ async function runMuonApp(request) {
 
     const muonApp = require(appPath);
     response.reqId = "0x" + curve.genKeyPair().getPrivate("hex");
-    apmAgent.addLabels({ reqId: response.reqId });
+    apmAgent.addLabels({ requestId: response.reqId });
     response.data.uid = uuid();
     let onRequestResult, appSignParams;
     try {
