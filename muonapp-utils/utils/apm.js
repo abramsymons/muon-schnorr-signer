@@ -15,7 +15,7 @@ async function withSpan(spanName, spanType, func, args) {
     } catch (e) {
         error = e;
     }
-    span.end();
+    if (span) span.end();
     if (error) throw error;
     return result;
 }
