@@ -48,12 +48,16 @@ router.use("/v1/", async (req, res) => {
 // Error handler function
 const errorHandler = (res, error) => {
     console.error("error: ", error);
-    res.status(400).json({
+    response = {
         success: false,
         error: {
             message: error.message,
         },
-    });
+    };
+    if (error.metadata) {
+        response.error.data = error.metadata;
+    }
+    res.status(400).json(response);
     apmAgent.captureError(error, { custom: error.metadata });
     apmAgent.endTransaction("failure");
 };
