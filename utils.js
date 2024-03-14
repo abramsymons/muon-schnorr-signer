@@ -148,6 +148,7 @@ function moduleIsAvailable(path) {
 
 async function runMuonApp(request) {
     const { app, method, params = {} } = request;
+    const { apmAgent } = MuonAppUtils;
 
     const appPath = `./muon-apps/${app}.js`;
     if (!moduleIsAvailable(appPath)) {
@@ -169,10 +170,18 @@ async function runMuonApp(request) {
 
     const muonApp = require(appPath);
     response.reqId = "0x" + curve.genKeyPair().getPrivate("hex");
+    apmAgent.addLabels({ reqId: response.reqId });
     response.data.uid = uuid();
-    const onRequestResult = await muonApp.onRequest(response);
-    response.data.result = onRequestResult;
-    const appSignParams = muonApp.signParams(response, onRequestResult);
+    let onRequestResult, appSignParams;
+    try {
+        onRequestResult = await muonApp.onRequest(response);
+        response.data.result = onRequestResult;
+        appSignParams = muonApp.signParams(response, onRequestResult);
+    } catch (error) {
+        if (error.data) error.data.reqId = response.reqId;
+        else error.data = { reqId: response.reqId };
+        throw error;
+    }
     const hashSecurityParams = soliditySha3(...appSignParams);
     response.data.signParams = [
         { name: "appId", type: "uint256", value: response.appId },
