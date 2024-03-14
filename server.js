@@ -25,6 +25,8 @@ router.get("/", (req, res) => {
 });
 
 router.use("/v1/", async (req, res) => {
+    let trans;
+    let result;
     try {
         const mixed = {
             ...req.query,
@@ -33,18 +35,23 @@ router.use("/v1/", async (req, res) => {
         const { app, method, params = {} } = mixed;
         const requestData = { app, method, params };
 
-        apmAgent.startTransaction(method, `${app}-muon-app`);
+        trans = apmAgent.startTransaction(method, `${app}-muon-app`);
         apmAgent.addLabels(params);
         const result = await runMuonApp(requestData);
         if (!result) {
             throw new Error("Running the Moun app failed.");
         }
         apmAgent.addLabels(result.data.result);
-        apmAgent.endTransaction();
-        return res.json({ success: true, result });
+        result = res.json({ success: true, result });
     } catch (error) {
-        return errorHandler(res, error);
+        apmAgent.captureError(error, { custom: error.data });
+        if (trans) {
+            trans.result = "failure";
+        }
+        result = errorHandler(res, error);
     }
+    if (trans) trans.end();
+    return result;
 });
 
 // Error handler function
@@ -58,8 +65,6 @@ const errorHandler = (res, error) => {
         },
     };
     res.status(400).json(response);
-    apmAgent.captureError(error, { custom: error.data });
-    apmAgent.endTransaction("failure");
 };
 
 // Start the server and set up periodic request status updates
