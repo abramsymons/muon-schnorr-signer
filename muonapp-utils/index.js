@@ -27,6 +27,7 @@ const { BNSqrt } = require("./utils/bn-sqrt");
 const { schnorrVerifyWithNonceAddress } = require("../utils");
 
 const { apmAgent, withSpan } = require("./utils/apm");
+const { ApmMetadataError } = require("./utils/errors");
 
 module.exports = {
     axios,
@@ -58,4 +59,5 @@ module.exports = {
     schnorrVerifyWithNonceAddress,
     apmAgent,
     withSpan,
+    ApmMetadataError,
 };
