@@ -33,7 +33,7 @@ router.use("/v1/", async (req, res) => {
         const { app, method, params = {} } = mixed;
         const requestData = { app, method, params };
 
-        apmAgent.startTransaction(method, "muon-app");
+        apmAgent.startTransaction(method, `${app}-muon-app`);
         const result = await runMuonApp(requestData);
         if (!result) {
             throw new Error("Running the Moun app failed.");
