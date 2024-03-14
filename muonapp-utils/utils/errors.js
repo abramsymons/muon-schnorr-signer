@@ -1,10 +1,10 @@
-class ApmMetadataError extends Error {
-    constructor(message, metadata, options) {
+class MuonAppError extends Error {
+    constructor(message, data, options) {
         super(message, options);
-        this.metadata = metadata;
+        this.data = data;
     }
 }
 
 module.exports = {
-    ApmMetadataError,
+    MuonAppError,
 };

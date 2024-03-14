@@ -52,13 +52,11 @@ const errorHandler = (res, error) => {
         success: false,
         error: {
             message: error.message,
+            data: error.data,
         },
     };
-    if (error.metadata) {
-        response.error.data = error.metadata;
-    }
     res.status(400).json(response);
-    apmAgent.captureError(error, { custom: error.metadata });
+    apmAgent.captureError(error, { custom: error.data });
     apmAgent.endTransaction("failure");
 };
 
