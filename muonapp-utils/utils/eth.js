@@ -6,6 +6,7 @@ const crypto = require("./crypto");
 const EthRpcList = require("./eth-rpc-list");
 const ERC20_ABI = require("../data/ERC20-ABI.json");
 const ERC721_ABI = require("../data/ERC721-ABI.json");
+const { MuonAppError } = require("./errors");
 
 const lastUsedRpcIndex = {};
 const web3Instances = {};
@@ -119,7 +120,7 @@ async function wrappedCall(network, web3ApiCall, args = [], options = {}) {
             delete web3Instances[chainId];
         }
         console.log(e);
-        throw { message: "FAILED_TO_REACH_CHAIN", chainId };
+        throw new MuonAppError("FAILED_TO_REACH_CHAIN", { chainId });
     }
 }
 
