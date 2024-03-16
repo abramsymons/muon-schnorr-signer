@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
 
 router.use("/v1/", async (req, res) => {
     let trans;
-    let result;
+    let response;
     try {
         const mixed = {
             ...req.query,
@@ -42,16 +42,16 @@ router.use("/v1/", async (req, res) => {
             throw new Error("Running the Moun app failed.");
         }
         apmAgent.addLabels(result.data.result);
-        result = res.json({ success: true, result });
+        response = res.json({ success: true, result });
     } catch (error) {
         apmAgent.captureError(error, { custom: error.data });
         if (trans) {
             trans.result = "failure";
         }
-        result = errorHandler(res, error);
+        response = errorHandler(res, error);
     }
     if (trans) trans.end();
-    return result;
+    return response;
 });
 
 // Error handler function
