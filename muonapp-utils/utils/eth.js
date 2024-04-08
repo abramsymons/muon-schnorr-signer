@@ -105,7 +105,7 @@ const web3ProvidersSpecificErrors = [
 function errorNeedRpcRotate(msg) {
     msg = msg.toLowerCase();
     for (const specificMsg of web3ProvidersSpecificErrors) {
-        if (specificMsg.includes(msg)) return true;
+        if (msg.includes(specificMsg)) return true;
     }
     return false;
 }
@@ -116,7 +116,7 @@ async function wrappedCall(network, web3ApiCall, args = [], options = {}) {
     } catch (e) {
         const chainId = getNetworkId(network);
         if (options.forceRotate || errorNeedRpcRotate(e.message)) {
-            console.log(`error on web3 call`, { chainId }, e.message);
+            console.log(`error on web3 call`, { chainId, rpc: web3Instances[chainId].provider.clientUrl }, e.message);
             delete web3Instances[chainId];
         }
         console.log(e);
