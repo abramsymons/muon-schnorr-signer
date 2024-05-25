@@ -3,7 +3,7 @@ const apm = require("elastic-apm-node");
 const apmAgent = apm.start({
     serverUrl: process.env.APM_SERVER_URL,
     serviceName: process.env.APP_NAME,
-    active: process.env.ENABLE_APM === "true",
+    active: process.env.ENABLED_APM === "True",
     secretToken: process.env.APM_SECRET,
 });
 
