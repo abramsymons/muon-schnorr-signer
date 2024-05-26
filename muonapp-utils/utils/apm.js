@@ -4,7 +4,7 @@ const apmAgent = apm.start({
     serverUrl: process.env.APM_SERVER_URL,
     serviceName: process.env.APP_NAME,
     active: process.env.ENABLED_APM === "True",
-    secretToken: process.env.APM_SECRET,
+    secretToken: process.env.APM_SECRET_TOKEN,
 });
 
 async function withSpan(spanName, spanType, func, args) {
