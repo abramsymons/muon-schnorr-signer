@@ -182,13 +182,17 @@ async function runMuonApp(request) {
         else error.data = { reqId: response.reqId };
         throw error;
     }
-    const hashSecurityParams = soliditySha3(...appSignParams);
-    response.data.signParams = [
-        { name: "appId", type: "uint256", value: response.appId },
-        { name: "reqId", type: "bytes", value: response.reqId },
-        ...appSignParams,
-    ];
-    response.data.resultHash = soliditySha3(...response.data.signParams);
+    try {
+        response.data.signParams = [
+            { name: "appId", type: "uint256", value: response.appId },
+            { name: "reqId", type: "bytes", value: response.reqId },
+            ...appSignParams,
+        ];
+        response.data.resultHash = soliditySha3(...response.data.signParams);
+    } catch (error) {
+        error.data = onRequestResult;
+        error.data.reqId = response.reqId;
+    }
 
     const nonce = curve.genKeyPair();
     response.data.init = { nonceAddress: pub2addr(nonce.getPublic()) };
