@@ -192,6 +192,7 @@ async function runMuonApp(request) {
     } catch (error) {
         error.data = onRequestResult;
         error.data.reqId = response.reqId;
+        throw error;
     }
 
     const nonce = curve.genKeyPair();
