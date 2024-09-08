@@ -114,12 +114,12 @@ async function wrappedCall(network, web3ApiCall, args = [], options = {}) {
     try {
         return await web3ApiCall(...args);
     } catch (e) {
+        console.log('error on web3 call - ', e);
         const chainId = getNetworkId(network);
         if (options.forceRotate || errorNeedRpcRotate(e.message)) {
-            console.log(`error on web3 call`, { chainId, rpc: web3Instances[chainId].provider.clientUrl }, e.message);
+            console.log(`error on web3 call needs rpc rotate -`, { chainId, rpc: web3Instances[chainId].currentProvider.clientUrl }, e.message);
             delete web3Instances[chainId];
         }
-        console.log(e);
         throw new MuonAppError("FAILED_TO_REACH_CHAIN", { chainId });
     }
 }
